@@ -21,18 +21,27 @@ export function FeedCard({ item }: { item: FeedItem }) {
   const isInView = useInView(ref, { once: false, amount: 0.5 });
 
   const isRoommate = item.type === 'roommate';
-  const data = item.data as (typeof isRoommate extends true ? User : Place);
 
-  if (isRoommate) {
-    const roommate = data as User;
+  if (isRoommate && isUser(item.data)) {
+    const roommate = item.data;
     return (
       <RoommateCard roommate={roommate} isInView={isInView} containerRef={ref} />
     );
-  } else {
-    const place = data as Place;
+  } else if (!isRoommate && isPlace(item.data)) {
+    const place = item.data;
     return (
       <PlaceCard place={place} isInView={isInView} containerRef={ref} />
     );
+  }
+
+  return null;
+
+  function isUser(data: any): data is User {
+    return data && typeof data.name === 'string' && typeof data.age === 'number';
+  }
+
+  function isPlace(data: any): data is Place {
+    return data && typeof data.title === 'string' && typeof data.rent === 'number';
   }
 }
 
