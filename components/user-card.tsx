@@ -63,7 +63,7 @@ export function UserCard({ user }: { user: User }) {
               
               <div className="flex text-xs text-muted-foreground mb-3">
                 <span className="mr-3">
-                  <span className="font-medium">Budget:</span> ${user.budget.min}-${user.budget.max}
+                  <span className="font-medium">Budget:</span> ₦{user.budget.min}-₦{user.budget.max}
                 </span>
                 <span>
                   <span className="font-medium">Available:</span> {new Date(user.moveInDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}

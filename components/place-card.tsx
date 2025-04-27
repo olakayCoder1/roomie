@@ -27,7 +27,7 @@ export function PlaceCard({ place }: { place: Place }) {
               </AspectRatio>
               <div className="absolute top-2 right-2">
                 <Badge className="bg-primary text-primary-foreground">
-                  ${place.rent}/mo
+                ₦{place.rent}/mo
                 </Badge>
               </div>
             </div>

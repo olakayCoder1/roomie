@@ -95,7 +95,7 @@ export function ProfileContent() {
                   <Textarea id="bio" defaultValue={profile.bio} />
                 </div>
                 <div className="space-y-2">
-                  <Label>Budget Range: ${budgetRange[0]} - ${budgetRange[1]}</Label>
+                  <Label>Budget Range: ₦{budgetRange[0]} - ₦{budgetRange[1]}</Label>
                   <Slider
                     min={400}
                     max={3000}
@@ -124,7 +124,7 @@ export function ProfileContent() {
                 <div className="flex items-center">
                   <DollarSign className="h-4 w-4 mr-2 text-muted-foreground" /> 
                   <span className="text-muted-foreground">Budget:</span>
-                  <span className="ml-2">${budgetRange[0]} - ${budgetRange[1]}</span>
+                  <span className="ml-2">₦{budgetRange[0]} - ₦{budgetRange[1]}</span>
                 </div>
                 <div className="flex items-center">
                   <Calendar className="h-4 w-4 mr-2 text-muted-foreground" /> 

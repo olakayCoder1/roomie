@@ -112,7 +112,7 @@ export function PlacesFeed() {
 
               <div>
                 <Label htmlFor="price-range" className="block mb-2">
-                  Price Range: ${priceRange[0]} - ${priceRange[1]}
+                  Price Range: ₦{priceRange[0]} - ₦{priceRange[1]}
                 </Label>
                 <Slider
                   id="price-range"

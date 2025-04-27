@@ -97,7 +97,7 @@ function RoommateCard({
         
         <div className="flex items-center justify-between text-sm text-muted-foreground">
           <div>
-            <span className="font-semibold">Budget:</span> ${roommate.budget.min} - ${roommate.budget.max}
+            <span className="font-semibold">Budget:</span> ₦{roommate.budget.min} - ₦{roommate.budget.max}
           </div>
           <div>
             <span className="font-semibold">Available:</span> {new Date(roommate.moveInDate).toLocaleDateString()}
@@ -139,7 +139,7 @@ function PlaceCard({
         </AspectRatio>
         <div className="absolute top-3 right-3">
           <Badge className="bg-primary text-primary-foreground">
-            ${place.rent}/mo
+          ₦{place.rent}/mo
           </Badge>
         </div>
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4 text-white">

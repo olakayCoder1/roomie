@@ -81,7 +81,7 @@ export function RoommatesFeed() {
             <div className="py-6">
               <div className="mb-6">
                 <Label htmlFor="budget-range" className="block mb-2">
-                  Budget Range: ${budgetRange[0]} - ${budgetRange[1]}
+                  Budget Range: ₦{budgetRange[0]} - ₦{budgetRange[1]}
                 </Label>
                 <Slider
                   id="budget-range"
