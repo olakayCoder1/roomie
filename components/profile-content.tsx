@@ -30,17 +30,18 @@ export function ProfileContent() {
 
   // Mock profile data
   const profile = {
-    name: 'Alex Johnson',
-    age: 24,
+    name: 'Aisha Bello',
+    age: 23,
     avatar: 'https://images.pexels.com/photos/2379005/pexels-photo-2379005.jpeg',
-    bio: 'Tech enthusiast, loves hiking and cooking. Clean and organized roommate looking for similar.',
-    occupation: 'Software Engineer',
-    location: 'San Francisco, CA',
+    bio: 'Calm and organized NYSC member in Ilorin. Loves reading, cooking, and values a tidy shared space.',
+    occupation: 'NYSC Corps Member',
+    location: 'Ilorin, Kwara',
     moveInDate: '2023-06-15',
-    lifestylePreferences: ['Non-smoker', 'Pet-friendly', 'Early riser', 'Clean', 'Social'],
-    savedRoommates: 3,
-    savedPlaces: 5,
+    lifestylePreferences: ['Non-smoker', 'Early riser', 'Clean', 'Quiet', 'Respectful'],
+    savedRoommates: 2,
+    savedPlaces: 4,
   };
+  
 
   return (
     <div className="container max-w-md mx-auto px-4 py-6 pb-20">
