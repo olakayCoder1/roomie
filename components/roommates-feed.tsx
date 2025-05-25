@@ -1,8 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { roommates } from '@/data/roommates';
 import { User } from '@/types';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
@@ -17,17 +16,81 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { UserCard } from '@/components/user-card';
+import { getUserInterests } from '@/app/actions/feed-actions';
+import { useToast } from '@/hooks/use-toast';
+import { UserCard } from './user-card';
 
-export function RoommatesFeed() {
-  const [filteredRoommates, setFilteredRoommates] = useState<User[]>(roommates);
+interface RoommatesFeedProps {
+  roommates: User[]; // not used anymore but can serve as fallback
+  currentUserId?: string;
+}
+
+export function RoommatesFeed({ roommates, currentUserId }: RoommatesFeedProps) {
+  const [baseRoommates, setBaseRoommates] = useState<User[]>([]);
+  const [filteredRoommates, setFilteredRoommates] = useState<User[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [budgetRange, setBudgetRange] = useState([500, 2000]);
+  const [isLoadingInterests, setIsLoadingInterests] = useState(false);
+  const { toast } = useToast();
 
+  // Filter roommates based on search and budget
+  const filterRoommates = (term: string, budget: number[]) => {
+    const filtered = baseRoommates.filter(roommate => {
+      const matchesSearch =
+        (roommate.name?.toLowerCase().includes(term) || '') ||
+        (roommate.location?.toLowerCase().includes(term) || '') ||
+        (roommate.occupation?.toLowerCase().includes(term) || '') ||
+        (roommate.bio?.toLowerCase().includes(term) || '');
+
+      const matchesBudget =
+        (roommate.budget?.max || 0) >= budget[0] &&
+        (roommate.budget?.min || 0) <= budget[1];
+
+      return matchesSearch && matchesBudget;
+    });
+
+    setFilteredRoommates(filtered);
+  };
+
+
+  const fetchInterests = async () => {
+      setIsLoadingInterests(true);
+      try {
+        const result = await getUserInterests(currentUserId);
+        if (result.error) {
+          toast({
+            title: 'Error',
+            description: result.error,
+            variant: 'destructive',
+          });
+          return;
+        }
+
+        const data = result.data || [];
+        setBaseRoommates(data);             // Store full list
+        setFilteredRoommates(data);         // Initialize filtered list
+      } catch (error) {
+        toast({
+          title: 'Error',
+          description: 'Failed to load interested users',
+          variant: 'destructive',
+        });
+      } finally {
+        setIsLoadingInterests(false);
+      }
+    };
+
+  // Fetch interested users
+  useEffect(() => {
+    if (!currentUserId) return;
+
+    fetchInterests();
+  }, [currentUserId, toast]);
+
+  // Handlers
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value.toLowerCase();
     setSearchTerm(term);
-    
     filterRoommates(term, budgetRange);
   };
 
@@ -36,21 +99,12 @@ export function RoommatesFeed() {
     filterRoommates(searchTerm, value);
   };
 
-  const filterRoommates = (term: string, budget: number[]) => {
-    const filtered = roommates.filter(roommate => {
-      const matchesSearch = 
-        roommate.name.toLowerCase().includes(term) || 
-        roommate.location.toLowerCase().includes(term) ||
-        roommate.occupation.toLowerCase().includes(term) ||
-        roommate.bio.toLowerCase().includes(term);
-      
-      const matchesBudget = 
-        roommate.budget.max >= budget[0] && roommate.budget.min <= budget[1];
-      
-      return matchesSearch && matchesBudget;
-    });
-    
-    setFilteredRoommates(filtered);
+  const resetFilters = () => {
+    const defaultBudget = [500, 2000];
+    setSearchTerm('');
+    setBudgetRange(defaultBudget);
+    filterRoommates('', defaultBudget);
+    fetchInterests();
   };
 
   return (
@@ -65,6 +119,7 @@ export function RoommatesFeed() {
             onChange={handleSearch}
           />
         </div>
+
         <Sheet>
           <SheetTrigger asChild>
             <Button variant="outline" size="icon">
@@ -74,9 +129,7 @@ export function RoommatesFeed() {
           <SheetContent>
             <SheetHeader>
               <SheetTitle>Filter Options</SheetTitle>
-              <SheetDescription>
-                Refine your roommate search
-              </SheetDescription>
+              <SheetDescription>Refine your roommate search</SheetDescription>
             </SheetHeader>
             <div className="py-6">
               <div className="mb-6">
@@ -85,43 +138,51 @@ export function RoommatesFeed() {
                 </Label>
                 <Slider
                   id="budget-range"
-                  min={400}
-                  max={3000}
-                  step={100}
+                  min={30000}
+                  max={300000}
+                  step={10000}
                   value={budgetRange}
                   onValueChange={handleBudgetChange}
                   className="mt-2"
                 />
               </div>
-              <Button className="w-full">Apply Filters</Button>
+              <Button className="w-full" onClick={() => filterRoommates(searchTerm, budgetRange)}>
+                Apply Filters
+              </Button>
             </div>
           </SheetContent>
         </Sheet>
       </div>
 
       <div className="space-y-4">
-        {filteredRoommates.length > 0 ? (
-          filteredRoommates.map((roommate, index) => (
-            <motion.div
-              key={roommate.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.1 }}
-            >
-              <UserCard user={roommate} />
-            </motion.div>
-          ))
-        ) : (
+        {isLoadingInterests ? (
           <div className="text-center py-8">
-            <p className="text-muted-foreground">No roommates found matching your criteria.</p>
-            <Button variant="link" onClick={() => {
-              setSearchTerm('');
-              setBudgetRange([500, 2000]);
-              setFilteredRoommates(roommates);
-            }}>
-              Reset filters
-            </Button>
+            <p className="text-muted-foreground">Loading interested users...</p>
           </div>
+        ) : (
+          <>
+            {filteredRoommates.length > 0 ? (
+              filteredRoommates.map((roommate, index) => (
+                <motion.div
+                  key={roommate.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                >
+                  <UserCard user={roommate} isInterested={true} />
+                </motion.div>
+              ))
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground">
+                  No roommates found matching your criteria.
+                </p>
+                <Button variant="link" onClick={resetFilters}>
+                  Reset filters
+                </Button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

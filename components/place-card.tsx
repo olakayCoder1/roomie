@@ -64,10 +64,6 @@ export function PlaceCard({ place }: { place: Place }) {
                 )}
               </div>
               
-              <div className="flex items-center text-xs text-muted-foreground mb-3">
-                <Calendar className="h-3.5 w-3.5 mr-1" />
-                <span>Available from {new Date(place.availableFrom).toLocaleDateString()}</span>
-              </div>
               
               <div className="flex gap-2">
                 <Button size="sm" className="flex-1">

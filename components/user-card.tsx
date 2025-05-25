@@ -5,8 +5,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Heart, MessageCircle } from 'lucide-react';
+import { Heart } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { MessageButton } from './message-button';
+
+// ✅ Reference public image via path
+const fallbackAvatar = '/roommate-default.png';
 
 export function UserCard({ user }: { user: User }) {
   return (
@@ -19,7 +23,7 @@ export function UserCard({ user }: { user: User }) {
           <div className="flex">
             <div className="relative w-1/3">
               <img 
-                src={user.avatarUrl} 
+                src={user.avatarUrl || fallbackAvatar} 
                 alt={user.name}
                 className="w-full h-full object-cover aspect-square"
               />
@@ -39,7 +43,7 @@ export function UserCard({ user }: { user: User }) {
                   <p className="text-sm text-muted-foreground">{user.location}</p>
                 </div>
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={user.avatarUrl} alt={user.name} />
+                  <AvatarImage src={user.avatarUrl || fallbackAvatar} alt={user.name} />
                   <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                 </Avatar>
               </div>
@@ -71,9 +75,13 @@ export function UserCard({ user }: { user: User }) {
               </div>
               
               <div className="flex gap-2">
-                <Button size="sm" className="flex-1">
-                  <MessageCircle className="h-4 w-4 mr-1" /> Message
-                </Button>
+                <MessageButton
+                  userId={user.id}
+                  userName={user.name}
+                  initialMessage={`Hi ${user.name}! I saw your profile and think we might be compatible roommates. I'm looking for someone with a budget of ₦${user.budget.min}-₦${user.budget.max} and love that you're into ${user.lifestylePreferences.slice(0, 2).join(' and ')}. Would you like to chat about potentially living together?`}
+                  size="sm"
+                  className="flex-1"
+                />
                 <Button size="sm" variant="outline">
                   <Heart className="h-4 w-4" />
                 </Button>

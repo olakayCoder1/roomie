@@ -9,7 +9,7 @@ import { Home, Users, Building2, MessageCircle, User } from 'lucide-react';
 const navItems = [
   { name: 'Home', href: '/', icon: Home },
   { name: 'Roommates', href: '/roommates', icon: Users },
-  { name: 'Places', href: '/places', icon: Building2 },
+  // { name: 'Places', href: '/places', icon: Building2 },
   { name: 'Messages', href: '/messages', icon: MessageCircle },
   { name: 'Profile', href: '/profile', icon: User },
 ];

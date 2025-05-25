@@ -1,6 +1,8 @@
+// Updated FeedCard component to use hasShownInterest flag
+
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import {
   Heart,
@@ -8,6 +10,7 @@ import {
   Share,
   Bookmark,
   Info,
+  Check,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -15,17 +18,71 @@ import { cn } from '@/lib/utils';
 import { Place, User, FeedItem } from '@/types';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Badge } from '@/components/ui/badge';
+import { saveInterest } from '@/app/actions/feed-actions';
+import { toast } from '@/hooks/use-toast';
+import defaultAvatar from '@/public/roommate-default.png'; 
 
-export function FeedCard({ item }: { item: FeedItem }) {
+interface FeedCardProps {
+  item: FeedItem;
+  currentUserId: string;
+  onInterest?: (userId: string, newInterestState: boolean) => void;
+}
+
+export function FeedCard({ item, currentUserId, onInterest }: FeedCardProps) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: false, amount: 0.5 });
 
   const isRoommate = item.type === 'roommate';
 
+  const showInterest = async (targetUserId: string) => {
+    console.log("Toggling Interest");
+
+    try {
+      const result = await saveInterest(currentUserId, targetUserId);
+      console.log(result);
+      
+      if (result.error) {
+        toast({
+          title: "Error",
+          description: result.error,
+          variant: "destructive",
+        });
+      } else {
+        const isNowInterested = result.data?.hasShownInterest || false;
+        const actionText = result.data?.action === 'added' ? 'shown interest in' : 'removed interest from';
+        
+        toast({
+          title: "Success",
+          description: `You have ${actionText} this user`,
+        });
+
+        // Call the callback to update parent state if provided
+        if (onInterest) {
+          onInterest(targetUserId, isNowInterested);
+        }
+
+        return isNowInterested;
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Something went wrong",
+        variant: "destructive",
+      });
+    }
+    
+    return null;
+  };
+
   if (isRoommate && isUser(item.data)) {
     const roommate = item.data;
     return (
-      <RoommateCard roommate={roommate} isInView={isInView} containerRef={ref} />
+      <RoommateCard 
+        roommate={roommate} 
+        isInView={isInView} 
+        containerRef={ref}
+        onInterest={showInterest}
+      />
     );
   } else if (!isRoommate && isPlace(item.data)) {
     const place = item.data;
@@ -48,24 +105,47 @@ export function FeedCard({ item }: { item: FeedItem }) {
 function RoommateCard({ 
   roommate, 
   isInView, 
-  containerRef 
+  containerRef,
+  onInterest
 }: { 
   roommate: User;
   isInView: boolean;
   containerRef: React.RefObject<HTMLDivElement>;
+  onInterest?: (userId: string) => Promise<boolean | null>;
 }) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasShownInterest, setHasShownInterest] = useState(roommate.hasShownInterest || false);
+
+  const handleInterest = async () => {
+    if (!onInterest) return;
+    
+    setIsLoading(true);
+    try {
+      const newInterestState = await onInterest(roommate.id);
+      if (newInterestState !== null) {
+        setHasShownInterest(newInterestState);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+
+  const profileImage = roommate.avatarUrl || defaultAvatar.src;
+
   return (
     <div 
       ref={containerRef} 
       className={cn(
-        "w-full border border-border rounded-xl mb-4 overflow-hidden bg-card transition-opacity",
-        isInView ? "opacity-100" : "opacity-40"
+        "w-full border border-border rounded-xl mb-4 overflow-hidden bg-card transition-all duration-300",
+        isInView ? "opacity-100" : "opacity-40",
+        hasShownInterest ? "ring-2 ring-green-500 ring-opacity-50" : ""
       )}
     >
       <div className="relative">
         <AspectRatio ratio={4/5}>
           <img
-            src={roommate.avatarUrl}
+            src={profileImage}
             alt={roommate.name}
             className="w-full h-full object-cover"
           />
@@ -73,15 +153,24 @@ function RoommateCard({
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4 text-white">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-semibold">{roommate.name}, {roommate.age}</h3>
-              <p className="text-sm opacity-90">{roommate.occupation}</p>
-              <p className="text-sm opacity-90">{roommate.location}</p>
+              <h3 className="text-lg font-semibold">{roommate.name} {roommate.hasShownInterest}</h3>
+              <p className="text-sm opacity-90">{roommate.department}</p>
+              <p className="text-sm opacity-90">{roommate.level}</p>
+              {/* <p className="text-sm opacity-90">{roommate.age} years old</p> */}
             </div>
             <Badge className="bg-white/20 backdrop-blur-sm text-white border-none">
               {roommate.compatibility}% Match
             </Badge>
           </div>
         </div>
+        {hasShownInterest && (
+          <div className="absolute top-3 left-3">
+            <Badge className="bg-green-600 text-white">
+              <Check className="w-3 h-3 mr-1" />
+              Interested
+            </Badge>
+          </div>
+        )}
       </div>
       
       <div className="p-4">
@@ -100,13 +189,29 @@ function RoommateCard({
             <span className="font-semibold">Budget:</span> ₦{roommate.budget.min} - ₦{roommate.budget.max}
           </div>
           <div>
-            <span className="font-semibold">Available:</span> {new Date(roommate.moveInDate).toLocaleDateString()}
+            <span className="font-semibold">Location:</span> {roommate.location}
           </div>
         </div>
       </div>
       
       <div className="flex justify-between p-3 border-t border-border">
-        <CardActions />
+        <Button 
+          className={cn(
+            'w-full flex items-center justify-center py-3 rounded-sm transition-all duration-300',
+            hasShownInterest 
+              ? 'bg-green-600 hover:bg-green-700 text-white' 
+              : 'bg-green-700 hover:bg-green-800 text-white'
+          )}
+          onClick={handleInterest}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+          ) : hasShownInterest ? (
+            <Check className="w-4 h-4 mr-2" />
+          ) : null}
+          {hasShownInterest ? 'Interested' : 'Show Interest'}
+        </Button>
       </div>
     </div>
   );

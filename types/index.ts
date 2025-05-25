@@ -1,19 +1,20 @@
+
+
 export interface User {
-  id: string;
-  name: string;
-  age: number;
-  occupation: string;
-  location: string;
-  bio: string;
-  avatarUrl: string;
-  lifestylePreferences: string[];
-  budget: {
-    min: number;
-    max: number;
-  };
-  moveInDate: string;
-  compatibility?: number;
-}
+  id: string; // UUID from Supabase
+  email: string; // Required, as per users table
+  full_name?: string; // Optional, from users table
+  age?: number; // Optional, from users table
+  occupation?: string; // Optional, from users table (used in ProfileContent)
+  location?: string; // Optional, from users table
+  bio?: string; // Optional, from users table
+  budget_low?: number; // Optional, from users table (should be number for consistency)
+  budget_high?: number; // Optional, from users table (should be number for consistency)
+  profile_url?: string; // Optional, from users table
+  department?: string; // Optional, from users table
+  level?: string; // Optional, from users table
+  lifestylePreferences?: string[]; // Optional, derived from roommate_preferences table
+};
 
 export interface Place {
   id: string;
