@@ -19,7 +19,6 @@ import {
   markMessagesAsRead,
   Message,
   sendMessage,
-  startConversation,
   getCurrentUserId,
   handleStartNewConversation, // Import the standalone function
 } from '@/app/actions/message-actions';
