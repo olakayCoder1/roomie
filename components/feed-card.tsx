@@ -131,7 +131,7 @@ function RoommateCard({
   };
 
 
-  const profileImage = roommate.avatarUrl || defaultAvatar.src;
+  const profileImage = roommate.profile_url || defaultAvatar.src;
 
   return (
     <div 
@@ -146,14 +146,14 @@ function RoommateCard({
         <AspectRatio ratio={4/5}>
           <img
             src={profileImage}
-            alt={roommate.name}
+            alt={roommate.full_name}
             className="w-full h-full object-cover"
           />
         </AspectRatio>
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4 text-white">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-semibold">{roommate.name} {roommate.hasShownInterest}</h3>
+              <h3 className="text-lg font-semibold">{roommate.full_name} {roommate.hasShownInterest}</h3>
               <p className="text-sm opacity-90">{roommate.department}</p>
               <p className="text-sm opacity-90">{roommate.level}</p>
               {/* <p className="text-sm opacity-90">{roommate.age} years old</p> */}
@@ -175,7 +175,7 @@ function RoommateCard({
       
       <div className="p-4">
         <div className="flex flex-wrap gap-1 mb-3">
-          {roommate.lifestylePreferences.map((pref, i) => (
+          {roommate.lifestylePreferences && roommate.lifestylePreferences.map((pref:any, i:any) => (
             <Badge key={i} variant="secondary" className="text-xs">
               {pref}
             </Badge>
@@ -186,7 +186,7 @@ function RoommateCard({
         
         <div className="flex items-center justify-between text-sm text-muted-foreground">
           <div>
-            <span className="font-semibold">Budget:</span> ₦{roommate.budget.min} - ₦{roommate.budget.max}
+            <span className="font-semibold">Budget:</span> {roommate.budget ? `₦${roommate.budget.min} - ₦${roommate.budget.max}` : 'N/A'}
           </div>
           <div>
             <span className="font-semibold">Location:</span> {roommate.location}

@@ -1,10 +1,9 @@
 'use client';
 
-import { createClient } from '@/lib/supabase/client';
 import { useEffect, useState } from 'react';
-import { RealtimeChannel } from '@supabase/supabase-js';
+import { createClient, RealtimeChannel } from '@supabase/supabase-js';
 
-const supabase = createClient();
+const supabase = createClient('supabaseUrl', 'supabaseAnonKey');
 
 export function useSupabaseRealtime<T>(
   channel: string,

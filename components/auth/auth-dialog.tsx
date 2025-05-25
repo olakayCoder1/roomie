@@ -140,7 +140,7 @@ export function AuthDialog() {
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="flex items-center gap-2">
             <User className="h-4 w-4" />
-            {user.username || user.full_name || user.email}
+            { user.full_name || user.email}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">

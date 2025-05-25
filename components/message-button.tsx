@@ -53,7 +53,7 @@ export function MessageButton({
       // Create new conversation with optional initial message
       const defaultMessage = initialMessage || `Hi ${userName}! I saw your profile and think we might be compatible roommates. Would you like to chat?`;
       
-      const result = await startConversation(userId, defaultMessage);
+      const result:any = await startConversation(userId, defaultMessage);
       
       if (result.error) {
         toast({
@@ -135,7 +135,7 @@ export function QuickMessageButton({
     try {
       setLoading(true);
 
-      const result = await startConversation(userId, message);
+      const result:any = await startConversation(userId, message);
       
       if (result.error) {
         toast({

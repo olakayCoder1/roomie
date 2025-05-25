@@ -28,6 +28,7 @@ export default function RoommatesPage() {
           variant: "destructive",
         });
       } else {
+        // @ts-ignore
         setRoommates(result.data || []);
       }
     } finally {

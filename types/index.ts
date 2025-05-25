@@ -14,6 +14,12 @@ export interface User {
   department?: string; // Optional, from users table
   level?: string; // Optional, from users table
   lifestylePreferences?: string[]; // Optional, derived from roommate_preferences table
+  hasShownInterest?: boolean
+  compatibility?: number,
+  budget?: {
+    min: number,
+    max: number,
+  }
 };
 
 export interface Place {

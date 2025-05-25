@@ -35,7 +35,7 @@ export function RoommatesFeed({ roommates, currentUserId }: RoommatesFeedProps) 
 
   // Filter roommates based on search and budget
   const filterRoommates = (term: string, budget: number[]) => {
-    const filtered = baseRoommates.filter(roommate => {
+    const filtered = baseRoommates.filter((roommate:any) => {
       const matchesSearch =
         (roommate.name?.toLowerCase().includes(term) || '') ||
         (roommate.location?.toLowerCase().includes(term) || '') ||
@@ -56,6 +56,9 @@ export function RoommatesFeed({ roommates, currentUserId }: RoommatesFeedProps) 
   const fetchInterests = async () => {
       setIsLoadingInterests(true);
       try {
+        if (!currentUserId) {
+          throw new Error('currentUserId is required');
+        }
         const result = await getUserInterests(currentUserId);
         if (result.error) {
           toast({
@@ -169,7 +172,7 @@ export function RoommatesFeed({ roommates, currentUserId }: RoommatesFeedProps) 
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: index * 0.1 }}
                 >
-                  <UserCard user={roommate} isInterested={true} />
+                  <UserCard user={roommate} />
                 </motion.div>
               ))
             ) : (

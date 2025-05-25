@@ -9,4 +9,4 @@ console.log(supabaseAnonKey)
 // Create a single supabase client for interacting with your database
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
-export { createClient }
+export { createClient, supabaseAnonKey }

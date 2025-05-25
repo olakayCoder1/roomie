@@ -270,15 +270,15 @@ export async function registerMultipleUsersWithDetails() {
     const userId = regResult.user.id;
 
     // Insert roommate preferences (pick 2 random preferences)
-    const userPrefs = [];
+    const userPrefs:any = [];
     while (userPrefs.length < 2) {
       const pref = getRandom(samplePreferences);
-      if (!userPrefs.find(p => p.preference_value === pref.preference_value)) {
+      if (!userPrefs.find((p:any )=> p.preference_value === pref.preference_value)) {
         userPrefs.push(pref);
       }
     }
 
-    const prefsInsert = userPrefs.map(p => ({
+    const prefsInsert = userPrefs.map((p:any) => ({
       user_id: userId,
       preference_type: p.preference_type,
       preference_value: p.preference_value,

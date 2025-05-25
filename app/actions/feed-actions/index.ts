@@ -15,6 +15,7 @@ export async function fetchUsers(currentUserId?: string) {
       .select(`
         id,
         full_name,
+        email,
         age,
         location,
         bio,
@@ -57,6 +58,7 @@ export async function fetchUsers(currentUserId?: string) {
     const userList: User[] = users.map(user => ({
       id: user.id,
       name: user.full_name,
+      email:user.email,
       age: user.age,
       location: user.location || 'Location not specified',
       bio: user.bio || 'No bio available',
@@ -73,8 +75,8 @@ export async function fetchUsers(currentUserId?: string) {
       hasShownInterest: userInterests.includes(user.id), // Add interest flag
     }));
 
-    console.log('Fetched users count:', userList.length);
-    console.log('User IDs:', userList.map(u => u.id));
+    // console.log('Fetched users count:', userList.length);
+    // console.log('User IDs:', userList.map(u => u.id));
 
     const filteredUsers = currentUserId 
       ? userList.filter(user => user.id !== currentUserId)
@@ -113,8 +115,8 @@ export async function fetchFeed(
       timestamp: new Date().toISOString(),
     })) || [];
 
-    console.log('Feed items created:', userFeedItems.length);
-    console.log('Feed item IDs:', userFeedItems.map(item => item.id));
+    // console.log('Feed items created:', userFeedItems.length);
+    // console.log('Feed item IDs:', userFeedItems.map(item => item.id));
 
     return { data: userFeedItems };
   } catch (error) {
@@ -242,6 +244,7 @@ export async function getUserInterests(currentUserId: string) {
         users:target_user_id (
           id,
           full_name,
+          email,
           age,
           location,
           bio,
@@ -263,13 +266,15 @@ export async function getUserInterests(currentUserId: string) {
       return { error: 'Failed to fetch user interests' };
     }
 
+    
     const interestedUsers: User[] = interests
       ?.filter(interest => interest.users)
       .map(interest => {
-        const user = interest.users;
+        const user = Array.isArray(interest.users) ? interest.users[0] : interest.users;
         return {
           id: user.id,
           name: user.full_name,
+          email: user.email || '', 
           age: user.age,
           location: user.location || 'Location not specified',
           bio: user.bio || 'No bio available',
@@ -307,6 +312,7 @@ export async function getUsersInterestedInMe(currentUserId: string) {
         users:user_id (
           id,
           full_name,
+          email,
           age,
           location,
           bio,
@@ -341,10 +347,11 @@ export async function getUsersInterestedInMe(currentUserId: string) {
     const interestedUsers: User[] = interests
       ?.filter(interest => interest.users)
       .map(interest => {
-        const user = interest.users;
+        const user = Array.isArray(interest.users) ? interest.users[0] : interest.users;
         return {
           id: user.id,
           name: user.full_name,
+          email: user.email,
           age: user.age,
           location: user.location || 'Location not specified',
           bio: user.bio || 'No bio available',

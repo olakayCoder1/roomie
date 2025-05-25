@@ -180,12 +180,13 @@
 
 "use server";
 
+import { createAdminClient } from "@/lib/supabase/admin";
 import { createServerClient } from "@/lib/supabase/server";
 
 // New action to upload profile picture using FormData
 export async function uploadProfilePicture(userId: string, formData: FormData) {
   try {
-    const supabase = createServerClient();
+    const supabase = createAdminClient();
 
     const file = formData.get('file') as File;
     if (!file) {

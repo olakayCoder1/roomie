@@ -32,7 +32,7 @@ export function HomeFeed() {
       }
       setError(null);
 
-      console.log('Loading feed for user:', user?.id);
+      // console.log('Loading feed for user:', user?.id);
       const result = await fetchFeed('users', user?.id);
 
       if (result.error) {
@@ -41,8 +41,8 @@ export function HomeFeed() {
         return;
       }
 
-      console.log('Feed items received:', result.data?.length);
-      console.log('Feed item IDs:', result.data?.map(item => item.id));
+      // console.log('Feed items received:', result.data?.length);
+      // console.log('Feed item IDs:', result.data?.map(item => item.id));
       setFeedItems(result.data || []);
     } catch (err) {
       setError('An unexpected error occurred');
@@ -80,13 +80,6 @@ export function HomeFeed() {
     );
   }
 
-  console.log('Rendering feed items:', feedItems.length);
-  console.log('Feed items to render:', feedItems.map(item => ({
-    id: item.id,
-    full_name: item.data.full_name,
-    name: item.data.name,
-    hasShownInterest: item.data.hasShownInterest,
-  })));
 
   return (
     <div className="flex flex-col items-center pb-16">
@@ -120,7 +113,7 @@ export function HomeFeed() {
                   }}
                   className="w-full mb-4"
                 >
-                  <FeedCard item={item} currentUserId={user?.id}/>
+                  <FeedCard item={item} currentUserId={user?.id ?? ''}/>
                 </motion.div>
               ))}
             </motion.div>

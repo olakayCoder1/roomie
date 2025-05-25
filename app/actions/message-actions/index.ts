@@ -350,7 +350,7 @@ export async function getConversationWithUser(otherUserId: string) {
 // New standalone function for starting conversations
 export async function handleStartNewConversation(userId: string, initialMessage?: string) {
   try {
-    const result = await startConversation(userId, initialMessage);
+    const result:any = await startConversation(userId, initialMessage);
     
     if (result.error) {
       return { error: result.error };
