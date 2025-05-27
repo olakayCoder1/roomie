@@ -58,6 +58,7 @@ export async function fetchUsers(currentUserId?: string) {
     const userList: User[] = users.map(user => ({
       id: user.id,
       name: user.full_name,
+      full_name: user.full_name,
       email:user.email,
       age: user.age,
       location: user.location || 'Location not specified',
@@ -68,6 +69,9 @@ export async function fetchUsers(currentUserId?: string) {
         max: user.budget_high || 0,
       },
       avatarUrl: user.profile_url,
+      profile_url: user.profile_url,
+      department: user.department,
+      level: user.level,
       lifestylePreferences: user.roommate_preferences?.map((pref: any) => pref.preference_value) || [],
       compatibility: Math.floor(Math.random() * 30) + 70,
       moveInDate: new Date().toISOString(),
