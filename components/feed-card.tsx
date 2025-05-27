@@ -155,7 +155,7 @@ function RoommateCard({
             <div>
               <h3 className="text-lg font-semibold">{roommate.full_name} {roommate.hasShownInterest}</h3>
               <p className="text-sm opacity-90">{roommate.department}</p>
-              <p className="text-sm opacity-90">{roommate.level}</p>
+              <p className="text-sm opacity-90">{roommate.level || 'No'} Level</p>
               {/* <p className="text-sm opacity-90">{roommate.age} years old</p> */}
             </div>
             <Badge className="bg-white/20 backdrop-blur-sm text-white border-none">
