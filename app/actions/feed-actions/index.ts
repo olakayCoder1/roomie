@@ -278,6 +278,7 @@ export async function getUserInterests(currentUserId: string) {
         return {
           id: user.id,
           name: user.full_name,
+          full_name: user.full_name,
           email: user.email || '', 
           age: user.age,
           location: user.location || 'Location not specified',
@@ -287,6 +288,7 @@ export async function getUserInterests(currentUserId: string) {
             min: user.budget_low || 0,
             max: user.budget_high || 0,
           },
+          profile_url: user.profile_url,
           avatarUrl: user.profile_url,
           lifestylePreferences: user.roommate_preferences?.map((pref: any) => pref.preference_value) || [],
           compatibility: Math.floor(Math.random() * 30) + 70,

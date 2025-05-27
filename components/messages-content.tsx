@@ -281,6 +281,9 @@ export function MessagesContent() {
       if (!silent && !messagesInitialLoaded) {
         setLoadingMessages(true);
       }
+
+
+      console.log(silent, messagesInitialLoaded)
       
       const result = await getConversationMessages(conversationId);
 
